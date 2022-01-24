@@ -1,0 +1,37 @@
+server:
+  port: 8888
+spring:
+  application:
+    name: gateway-server
+  cloud:
+    nacos:
+      discovery:
+        server-addr: nacos-server:8848 # modify local host file
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true # small hump rule
+      routes:
+        - id: admin-service_router
+          uri: lb://admin-service
+          predicates:
+            - Path=/admin/**
+        - id: test_router
+          uri: http://www.aliyun.com
+          predicates:
+            - Path=/product
+    sentinel:
+      filter:
+        enabled: true
+      transport:
+        dashboard: sentinel-server:8858
+      datasource:
+        ds1.nacos:
+          serverAddr: nacos-server:8848
+          dataId: gw-flow
+          ruleType: gw_flow
+        ds2.nacos:
+          serverAddr: nacos-server:8848
+          dataId: api-group
+          ruleType: gw_api_group
