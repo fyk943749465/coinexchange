@@ -35,3 +35,7 @@ spring:
           serverAddr: nacos-server:8848
           dataId: api-group
           ruleType: gw_api_group
+  redis:
+    host: redis-server
+    port: 6380
+    password: Ltd2022@$

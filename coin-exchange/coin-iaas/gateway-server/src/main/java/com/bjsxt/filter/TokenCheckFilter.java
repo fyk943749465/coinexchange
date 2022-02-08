@@ -2,11 +2,13 @@ package com.bjsxt.filter;
 
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -27,6 +29,8 @@ import java.util.Set;
 @Component
 public class TokenCheckFilter implements GlobalFilter, Ordered {
 
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     @Value("${no.token.access.urls:/admin/login}")
     private Set<String> noTokenAccessUrls;
@@ -42,7 +46,12 @@ public class TokenCheckFilter implements GlobalFilter, Ordered {
         if (StringUtils.isEmpty(token)) {
             return buildUNAuthorizationResult(exchange);
         }
-        return chain.filter(exchange);
+
+        Boolean hasKey = redisTemplate.hasKey(token);
+        if (hasKey != null && hasKey) {
+            return chain.filter(exchange);
+        }
+        return buildUNAuthorizationResult(exchange);
     }
 
     private Mono<Void> buildUNAuthorizationResult(ServerWebExchange exchange) {
@@ -62,7 +71,8 @@ public class TokenCheckFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest();
         HttpHeaders headers = request.getHeaders();
         String authorization = headers.getFirst(HttpHeaders.AUTHORIZATION);
-        if (Objects.isNull(authorization) || authorization.trim().isEmpty()){
+        if (Objects.isNull(authorization) || authorization.trim().isEmpty()
+        || authorization.replace("bearer ", "").isEmpty()){
             return null;
         }
         return authorization.replace("bearer ", "");
