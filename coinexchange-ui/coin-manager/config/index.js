@@ -3,7 +3,7 @@
 // see http://vuejs-templates.github.io/webpack for documentation.
 
 const path = require('path');
-let dev = "http://127.0.0.1";
+let dev = "http://127.0.0.1:8888";
 let haigen = "http://192.168.2.113:9000";
 let aliyun = "http://47.75.115.45:8091";
 let uploadServer = "http://47.106.158.72"

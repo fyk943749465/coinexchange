@@ -73,6 +73,11 @@ fun main(args: Array<String>) {
     }
 
     println(methodAction2(2, 3, 5))
+
+
+    val methodAction3 : (String) -> String = {"$it Derry"}
+    println(methodAction3("dddd"))
+
 }
 
 
