@@ -33,4 +33,5 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
         // 2 如果该用户不是超级管理员->>查询角色->查询菜单
         return sysMenuMapper.selectMenusByUserId(userId);
     }
+
 }

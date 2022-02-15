@@ -8,10 +8,10 @@ spring:
       discovery:
         server-addr: nacos-server:8848
   datasource:
-    url: jdbc:mysql://mysql-server:3307/coin_exchange?useSSL=false&serverTimezone=GMT%2B8
+    url: jdbc:mysql://mysql-server:3306/coin_exchange?useSSL=false&serverTimezone=GMT%2B8
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: Ltd2022@$
+    password: root
 #  redis:
 #    host: redis-server
 #    port: 6380

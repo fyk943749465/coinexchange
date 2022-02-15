@@ -12,4 +12,8 @@
     <!--@mbg.generated-->
     id, role_id, privilege_id
   </sql>
+
+  <select id="getPrivilegesByRoleId" resultType="java.lang.Long">
+    SELECT privilege_id FROM sys_role_privilege where role_id = #{roleId}
+  </select>
 </mapper>
