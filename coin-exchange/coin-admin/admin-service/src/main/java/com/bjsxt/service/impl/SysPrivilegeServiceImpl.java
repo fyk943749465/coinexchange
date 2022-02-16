@@ -27,15 +27,15 @@ public class SysPrivilegeServiceImpl extends ServiceImpl<SysPrivilegeMapper, Sys
     /**
      * 获取当前菜单对应的权限数据
      * 获取当前角色对应的权限数据
-     * @param id
+     * @param menuId
      * @param roleId
      * @return
      */
     @Override
-    public List<SysPrivilege> getPrivilegesByMenuId(Long id, Long roleId) {
+    public List<SysPrivilege> getPrivilegesByMenuId(Long menuId, Long roleId) {
 
         // 1. 查询当前菜单对应的权限
-        List<SysPrivilege> sysPrivileges = list(new LambdaQueryWrapper<SysPrivilege>().eq(SysPrivilege::getMenuId, id));
+        List<SysPrivilege> sysPrivileges = list(new LambdaQueryWrapper<SysPrivilege>().eq(SysPrivilege::getMenuId, menuId));
         if (CollectionUtil.isEmpty(sysPrivileges)) {
             return Collections.EMPTY_LIST;
         }
