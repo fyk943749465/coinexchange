@@ -43,7 +43,7 @@ public class SysRolePrivilegeController {
     public R grantPrivileges(@RequestBody RolePrivilegesParam rolePrivilegesParam) {
         boolean isOk = sysRolePrivilegeService.grantPrivileges(rolePrivilegesParam);
         if (isOk) {
-            return R.ok();
+            return R.ok("授予角色相应权限成功");
         }
         return R.fail("给角色授权失败");
     }
