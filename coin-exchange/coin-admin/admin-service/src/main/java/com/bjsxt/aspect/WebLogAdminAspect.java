@@ -93,7 +93,7 @@ public class WebLogAdminAspect {
 
         sysUserLog.setId(snowflake.nextId());
         sysUserLog.setDescription(webLog.getDescription());
-        sysUserLog.setUserId(authentication==null ? -1:Long.valueOf(authentication.getPrincipal().toString()));
+        sysUserLog.setUserId(authentication==null ? -1: authentication.getPrincipal().toString() == "anonymousUser" ? -1: Long.valueOf(authentication.getPrincipal().toString()));
         sysUserLog.setIp(webLog.getIp());
         sysUserLog.setMethod(webLog.getMethod());
         sysUserLog.setGroup(webLog.getDescription());
