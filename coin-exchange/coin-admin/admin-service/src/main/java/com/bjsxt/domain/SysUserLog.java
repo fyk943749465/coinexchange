@@ -23,7 +23,7 @@ public class SysUserLog {
     /**
      * 主键
      */
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.INPUT)
     @ApiModelProperty(value="主键")
     private Long id;
 

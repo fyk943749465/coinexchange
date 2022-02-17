@@ -3,6 +3,9 @@ package com.bjsxt.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bjsxt.domain.SysUser;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
+
 public interface SysUserService extends IService<SysUser>{
 
 
@@ -16,4 +19,8 @@ public interface SysUserService extends IService<SysUser>{
     Page<SysUser> findByPage(Page<SysUser> page, String mobile, String fullname);
 
     boolean addUser(SysUser sysUser);
+
+    boolean updateSysUser(SysUser sysUser);
+
+    boolean deleteUsers(List<Long> asList);
 }

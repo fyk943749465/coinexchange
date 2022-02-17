@@ -15,6 +15,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.Arrays;
+
 @RestController
 @Api(tags = "员工管理")
 @RequestMapping("/users")
@@ -52,5 +54,34 @@ public class SysUserController {
             return R.ok("新增用户成功");
         }
         return R.fail("新增用户失败");
+    }
+
+    @PatchMapping
+    @ApiOperation("更新用户信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "sysUser", value = "sysUser 的json数据")
+    })
+    @PreAuthorize("hasAuthority('sys_user_update')")
+    public R updateUser(@RequestBody SysUser sysUser) {
+        boolean save = sysUserService.updateSysUser(sysUser);
+        if (save) {
+            return R.ok();
+        }
+        return R.fail("更新失败");
+    }
+
+    @PostMapping("/delete")
+    @ApiOperation("删除用户")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ids", value = "用户id数组")
+    })
+    @PreAuthorize("hasAuthority('sys_user_delete')")
+    public R deleteUser(@RequestBody Long[] ids) {
+        boolean delete = sysUserService.deleteUsers(Arrays.asList(ids));
+        if (delete) {
+            return R.ok();
+        } else {
+            return R.fail("删除用户失败");
+        }
     }
 }

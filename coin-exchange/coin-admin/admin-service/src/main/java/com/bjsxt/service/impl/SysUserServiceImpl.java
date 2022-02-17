@@ -10,6 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,28 +48,58 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Transactional
     @Override
     public boolean addUser(SysUser sysUser) {
-        Long createUserId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+        Long createUserId = getaCurrentUserId();
         sysUser.setCreateBy(createUserId);
         String password = sysUser.getPassword();
         String encode = new BCryptPasswordEncoder().encode(password);
         sysUser.setPassword(encode);
         boolean save = save(sysUser);
         if (save) {
-            String roleString = sysUser.getRole_strings();
-            if (!StringUtils.isEmpty(roleString)) {
-                String[] roles = roleString.split(",");
-                List<SysUserRole> sysUserRoles = new ArrayList<>(roles.length);
-                for (String role : roles) {
-                    SysUserRole sysUserRole = new SysUserRole();
-                    sysUserRole.setCreateBy(createUserId);
-                    sysUserRole.setUserId(Long.valueOf(sysUser.getId()));
-                    sysUserRole.setRoleId(Long.valueOf(role));
-                    sysUserRoles.add(sysUserRole);
-                }
-                sysUserRoleService.saveBatch(sysUserRoles);
-            }
+            extracted(sysUser, createUserId);
             return true;
         }
         return false;
     }
+
+    private Long getaCurrentUserId() {
+        Long createUserId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+        return createUserId;
+    }
+
+    private void extracted(SysUser sysUser, Long createUserId) {
+        String roleString = sysUser.getRole_strings();
+        if (!StringUtils.isEmpty(roleString)) {
+            String[] roles = roleString.split(",");
+            List<SysUserRole> sysUserRoles = new ArrayList<>(roles.length);
+            for (String role : roles) {
+                SysUserRole sysUserRole = new SysUserRole();
+                sysUserRole.setCreateBy(createUserId);
+                sysUserRole.setUserId(Long.valueOf(sysUser.getId()));
+                sysUserRole.setRoleId(Long.valueOf(role));
+                sysUserRoles.add(sysUserRole);
+            }
+            sysUserRoleService.saveBatch(sysUserRoles);
+        }
+    }
+
+    @Transactional
+    @Override
+    public boolean updateSysUser(SysUser sysUser) {
+        Long createUserId = getaCurrentUserId();
+        String role_strings = sysUser.getRole_strings();
+        if (!StringUtils.isEmpty(role_strings)) {
+            sysUserRoleService.remove(new LambdaQueryWrapper<SysUserRole>().eq(SysUserRole::getUserId, sysUser.getId())); // 删除用户对应的角色
+            extracted(sysUser, createUserId); // 新增用户对应的角色
+        }
+        return saveOrUpdate(sysUser);
+    }
+
+    @Transactional
+    @Override
+    public boolean deleteUsers(List<Long> ids) {
+        boolean b = super.removeByIds(ids);
+        sysUserRoleService.remove(new LambdaQueryWrapper<SysUserRole>().in(SysUserRole::getUserId, ids));
+        return b;
+    }
+
 }
