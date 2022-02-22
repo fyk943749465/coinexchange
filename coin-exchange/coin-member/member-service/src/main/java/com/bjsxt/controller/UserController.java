@@ -6,6 +6,7 @@ import com.bjsxt.domain.User;
 import com.bjsxt.domain.UserAuthAuditRecord;
 import com.bjsxt.domain.UserAuthInfo;
 import com.bjsxt.model.R;
+import com.bjsxt.model.UserAuthForm;
 import com.bjsxt.service.UserAuthAuditRecordService;
 import com.bjsxt.service.UserAuthInfoService;
 import com.bjsxt.service.UserService;
@@ -201,13 +202,29 @@ public class UserController {
     @GetMapping("/current/info")
     @ApiOperation(value = "获取当前登录用户对象的信息")
     public R<User> currentUserInfo() {
+        // 获取到当前登录对象的一个id
         String idStr = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
         User user = userService.getById(Long.valueOf(idStr));
+        // 屏蔽到一些用户敏感信息
         user.setPassword("****");
         user.setPaypassword("***");
         user.setAccessKeyId("****");
         user.setAccessKeySecret("******");
         return R.ok(user);
+    }
+
+    @PostMapping("/authAccount")
+    @ApiOperation(value = "用户的实名认证")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userAuthForm", value = "userAuthFormjson数据")
+    })
+    public R identifyCheck(@RequestBody UserAuthForm userAuthForm) {
+        String idStr = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        boolean isOk = userService.identifyVerify(Long.valueOf(idStr), userAuthForm);
+        if (isOk) {
+            return R.ok();
+        }
+        return R.fail("认证失败");
     }
 
 }
