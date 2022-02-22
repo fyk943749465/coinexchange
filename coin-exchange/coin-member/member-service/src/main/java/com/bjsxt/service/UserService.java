@@ -5,6 +5,8 @@ import com.bjsxt.domain.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.bjsxt.model.UserAuthForm;
 
+import java.util.List;
+
 public interface UserService extends IService<User>{
 
 
@@ -15,4 +17,6 @@ public interface UserService extends IService<User>{
     void updateUserAuthStatus(Long id, Byte authStatus, Long authCode, String remark);
 
     boolean identifyVerify(Long valueOf, UserAuthForm userAuthForm);
+
+    void authUser(Long valueOf, List<String> imgs);
 }

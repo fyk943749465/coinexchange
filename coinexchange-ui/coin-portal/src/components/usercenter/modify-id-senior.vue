@@ -290,7 +290,7 @@
         }
       },
       async beforeUpload(){
-        let res = await uploadApi.getPreUpload()
+        let res = await uploadApi.getPreUpload() // 这里跟后台服务器交互，
         if(res.data){
           let preUploadData = res.data
           let {dir,policy,signature,callback,accessid,host} = preUploadData

@@ -1,12 +1,15 @@
 package com.bjsxt.service.impl;
 
+import cn.hutool.core.lang.Snowflake;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bjsxt.config.IdAutoConfiguration;
 import com.bjsxt.domain.UserAuthAuditRecord;
+import com.bjsxt.domain.UserAuthInfo;
 import com.bjsxt.model.UserAuthForm;
 import com.bjsxt.sdk.geetest.GeetestLib;
 import com.bjsxt.service.UserAuthAuditRecordService;
+import com.bjsxt.service.UserAuthInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -14,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -37,6 +41,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
+
+    @Autowired
+    private Snowflake snowflake;
+
+    @Autowired
+    private UserAuthInfoService userAuthInfoService;
 
     @Override
     public Page<User> findByPage(Page<User> page, String mobile, Long userId,
@@ -117,6 +127,38 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setIdCardType(userAuthForm.getIdCardType());
 
         return updateById(user);
+    }
+
+    /**
+     *
+     * @param id 用户id
+     * @param imgs 图片地址
+     */
+    @Override
+    @Transactional
+    public void authUser(Long id, List<String> imgs) {
+        if(CollectionUtils.isEmpty(imgs)) {
+            throw new IllegalArgumentException("用户的身份认证信息为空");
+        }
+        User user = super.getById(id);
+        if (user == null) {
+            throw new IllegalArgumentException("请输入正确的userId");
+        }
+        Long authCode = snowflake.nextId(); // 采用雪花算法生成一个
+        List<UserAuthInfo> authInfos = new ArrayList<>();
+        for(int i = 0; i < imgs.size(); ++i) {
+            String s = imgs.get(i);
+            UserAuthInfo userAuthInfo = new UserAuthInfo();
+            userAuthInfo.setUserId(id);
+            userAuthInfo.setImageUrl(s);
+            userAuthInfo.setSerialno(i + 1);    // 身份证的正、反面、手持
+            userAuthInfo.setAuthCode(authCode); // 一组图片信息一个authcode
+            authInfos.add(userAuthInfo);
+        }
+        userAuthInfoService.saveBatch(authInfos);
+        user.setReviewsStatus(0); //将状态改变为等待审核状态
+        updateById(user); // 更新用户状态
+
     }
 
     private void checkForm(UserAuthForm userAuthForm) {
