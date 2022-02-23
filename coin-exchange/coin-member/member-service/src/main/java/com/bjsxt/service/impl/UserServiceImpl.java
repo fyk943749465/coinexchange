@@ -4,15 +4,19 @@ import cn.hutool.core.lang.Snowflake;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bjsxt.config.IdAutoConfiguration;
+import com.bjsxt.domain.Sms;
 import com.bjsxt.domain.UserAuthAuditRecord;
 import com.bjsxt.domain.UserAuthInfo;
+import com.bjsxt.model.UpdatePhoneParam;
 import com.bjsxt.model.UserAuthForm;
 import com.bjsxt.sdk.geetest.GeetestLib;
+import com.bjsxt.service.SmsService;
 import com.bjsxt.service.UserAuthAuditRecordService;
 import com.bjsxt.service.UserAuthInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
@@ -47,6 +51,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Autowired
     private UserAuthInfoService userAuthInfoService;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    private SmsService smsService;
 
     @Override
     public Page<User> findByPage(Page<User> page, String mobile, Long userId,
@@ -159,6 +169,37 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setReviewsStatus(0); //将状态改变为等待审核状态
         updateById(user); // 更新用户状态
 
+    }
+
+    @Override
+    public boolean updatePhone(Long id, UpdatePhoneParam updatePhoneParam) {
+        User user = super.getById(id);
+        String oldMobile = user.getMobile();
+        // 从Redis中取出旧手机的验证码
+        String oldMobileCode = stringRedisTemplate.opsForValue().get("SMS:VERIFY_OLD_PHONE:" + oldMobile);
+        if (!updatePhoneParam.getOldValidateCode().equals(oldMobileCode)) {
+            throw new IllegalArgumentException("旧手机验证码错误");
+        }
+        String newMobileCode = stringRedisTemplate.opsForValue().get("SMS:CHANGE_PHONE_VERIFY:" + updatePhoneParam.getNewMobilePhone());
+        if (!updatePhoneParam.getNewMobilePhone().equals(newMobileCode)) {
+            throw new IllegalArgumentException("新手机验证码错误");
+        }
+        user.setMobile(updatePhoneParam.getNewMobilePhone());
+        return updateById(user);
+    }
+
+    @Override
+    public boolean checkNewPhone(String mobile, String countryCode) {
+        // 1. 手机号码是否被使用
+        int count = count(new LambdaQueryWrapper<User>().eq(User::getMobile, mobile).eq(User::getCountryCode, countryCode));
+        if (count > 0) {
+            throw new IllegalArgumentException("该手机号码已经被占用");
+        }
+        Sms sms = new Sms();
+        sms.setMobile(mobile);
+        sms.setCountryCode(countryCode);
+        sms.setTemplateCode("CHANGE_PHONE_VERIFY");
+        return smsService.sendSms(sms);
     }
 
     private void checkForm(UserAuthForm userAuthForm) {

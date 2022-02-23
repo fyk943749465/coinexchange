@@ -6,6 +6,7 @@ import com.bjsxt.domain.User;
 import com.bjsxt.domain.UserAuthAuditRecord;
 import com.bjsxt.domain.UserAuthInfo;
 import com.bjsxt.model.R;
+import com.bjsxt.model.UpdatePhoneParam;
 import com.bjsxt.model.UserAuthForm;
 import com.bjsxt.service.UserAuthAuditRecordService;
 import com.bjsxt.service.UserAuthInfoService;
@@ -239,4 +240,31 @@ public class UserController {
         return R.ok();
     }
 
+    @PostMapping("/updatePhone")
+    @ApiOperation(value = "修改手机号码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "updatePhoneParam", value = "修改手机号码提供的json数据")
+    })
+    public R updatePhone(@RequestBody @Validated UpdatePhoneParam updatePhoneParam) {
+        String idStr = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        boolean isOk = userService.updatePhone(Long.valueOf(idStr), updatePhoneParam);
+        if (isOk) {
+            return R.ok();
+        }
+        return R.fail("修改手机号码失败");
+    }
+
+    @GetMapping("/checkTel")
+    @ApiOperation(value = "检查新手机号码是否可用，若可用，则给新手机号码发送验证码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "mobile", value = "手机号码"),
+            @ApiImplicitParam(name = "countryCode", value = "国家代码")
+    })
+    public R checkNewPhone(@RequestParam(required = true) String mobile, @RequestParam(required = true) String countryCode) {
+        boolean isOk = userService.checkNewPhone(mobile, countryCode);
+        if (isOk) {
+            return R.ok();
+        }
+        return R.fail("新手机号码已被使用");
+    }
 }

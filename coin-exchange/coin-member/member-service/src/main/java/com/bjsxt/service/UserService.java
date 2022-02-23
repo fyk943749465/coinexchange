@@ -3,6 +3,7 @@ package com.bjsxt.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bjsxt.domain.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.bjsxt.model.UpdatePhoneParam;
 import com.bjsxt.model.UserAuthForm;
 
 import java.util.List;
@@ -19,4 +20,8 @@ public interface UserService extends IService<User>{
     boolean identifyVerify(Long valueOf, UserAuthForm userAuthForm);
 
     void authUser(Long valueOf, List<String> imgs);
+
+    boolean updatePhone(Long valueOf, UpdatePhoneParam updatePhoneParam);
+
+    boolean checkNewPhone(String mobile, String countryCode);
 }
