@@ -5,10 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bjsxt.domain.User;
 import com.bjsxt.domain.UserAuthAuditRecord;
 import com.bjsxt.domain.UserAuthInfo;
-import com.bjsxt.model.R;
-import com.bjsxt.model.UpdateLoginParam;
-import com.bjsxt.model.UpdatePhoneParam;
-import com.bjsxt.model.UserAuthForm;
+import com.bjsxt.model.*;
 import com.bjsxt.service.UserAuthAuditRecordService;
 import com.bjsxt.service.UserAuthInfoService;
 import com.bjsxt.service.UserService;
@@ -290,5 +287,15 @@ public class UserController {
         String idStr = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
         boolean isOk = userService.updateUserPayPwd(Long.valueOf(idStr), updateLoginParam);
         return isOk ? R.ok() : R.fail("修改密码失败");
+    }
+
+    @PostMapping("/setPayPassword")
+    @ApiOperation(value = "重新设置交易密码")
+    public R setPayPassword(@RequestBody @Validated UnsetPayPassword unsetPayPassword) {
+
+        String idStr = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        boolean isOk = userService.unsetPayPassword(Long.valueOf(idStr),unsetPayPassword);
+        return isOk ? R.ok() : R.fail("重置密码失败");
+
     }
 }

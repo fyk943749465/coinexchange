@@ -7,6 +7,7 @@ import com.bjsxt.config.IdAutoConfiguration;
 import com.bjsxt.domain.Sms;
 import com.bjsxt.domain.UserAuthAuditRecord;
 import com.bjsxt.domain.UserAuthInfo;
+import com.bjsxt.model.UnsetPayPassword;
 import com.bjsxt.model.UpdateLoginParam;
 import com.bjsxt.model.UpdatePhoneParam;
 import com.bjsxt.model.UserAuthForm;
@@ -247,6 +248,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new IllegalArgumentException("手机验证码错误");
         }
         user.setPaypassword(bCryptPasswordEncoder.encode(updateLoginParam.getNewpassword()));
+        return updateById(user);
+    }
+
+    @Override
+    public boolean unsetPayPassword(Long id, UnsetPayPassword unsetPayPassword) {
+        User user = super.getById(id);
+        if (user == null) {
+            throw new IllegalArgumentException("用户id不存在");
+        }
+        String validateCode = unsetPayPassword.getValidateCode();
+        String phoneValidateCode = stringRedisTemplate.opsForValue().get("SMS:FORGOT_PAY_PWD_VERIFY:" + user.getMobile());
+        if (!validateCode.equals(phoneValidateCode)) {
+            throw new IllegalArgumentException("输入的验证码不正确，请重新输入");
+        }
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+
+        user.setPaypassword(bCryptPasswordEncoder.encode(unsetPayPassword.getPayPassword()));
         return updateById(user);
     }
 

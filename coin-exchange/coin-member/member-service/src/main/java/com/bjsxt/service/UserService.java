@@ -3,6 +3,7 @@ package com.bjsxt.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bjsxt.domain.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.bjsxt.model.UnsetPayPassword;
 import com.bjsxt.model.UpdateLoginParam;
 import com.bjsxt.model.UpdatePhoneParam;
 import com.bjsxt.model.UserAuthForm;
@@ -53,4 +54,12 @@ public interface UserService extends IService<User>{
      * @return
      */
     boolean updateUserPayPwd(Long valueOf, UpdateLoginParam updateLoginParam);
+
+    /**
+     * 重置用户密码
+     * @param valueOf
+     * @param unsetPayPassword
+     * @return
+     */
+    boolean unsetPayPassword(Long valueOf, UnsetPayPassword unsetPayPassword);
 }
