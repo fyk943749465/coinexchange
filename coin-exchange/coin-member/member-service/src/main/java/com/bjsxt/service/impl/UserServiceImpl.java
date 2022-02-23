@@ -7,6 +7,7 @@ import com.bjsxt.config.IdAutoConfiguration;
 import com.bjsxt.domain.Sms;
 import com.bjsxt.domain.UserAuthAuditRecord;
 import com.bjsxt.domain.UserAuthInfo;
+import com.bjsxt.model.UpdateLoginParam;
 import com.bjsxt.model.UpdatePhoneParam;
 import com.bjsxt.model.UserAuthForm;
 import com.bjsxt.sdk.geetest.GeetestLib;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.io.Serializable;
@@ -200,6 +202,52 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         sms.setCountryCode(countryCode);
         sms.setTemplateCode("CHANGE_PHONE_VERIFY");
         return smsService.sendSms(sms);
+    }
+
+    @Override
+    public boolean updateUserPwd(Long id, UpdateLoginParam updateLoginParam) {
+        User user = super.getById(id);
+        if (user == null) {
+            throw new IllegalArgumentException("用户的id错误");
+        }
+        // 校验原始密码
+        String oldpassword = updateLoginParam.getOldpassword();
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        boolean matches = bCryptPasswordEncoder.matches(oldpassword, user.getPassword());
+        if (!matches) {
+            throw new IllegalArgumentException("用户的原始密码不正确");
+        }
+        // 校验手机验证码 // CHANGE_LOGIN_PWD_VERIFY数据库中的模板代码
+        String validateCode = updateLoginParam.getValidateCode();
+        String phoneValidateCode = stringRedisTemplate.opsForValue().get("SMS:CHANGE_LOGIN_PWD_VERIFY:" + user.getMobile());
+        if (!validateCode.equals(phoneValidateCode)) {
+            throw new IllegalArgumentException("手机验证码错误");
+        }
+        user.setPassword(updateLoginParam.getNewpassword());
+        return updateById(user);
+    }
+
+    @Override
+    public boolean updateUserPayPwd(Long id, UpdateLoginParam updateLoginParam) {
+        User user = super.getById(id);
+        if (user == null) {
+            throw new IllegalArgumentException("用户的id错误");
+        }
+        // 校验原始密码
+        String oldpassword = updateLoginParam.getOldpassword();
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        boolean matches = bCryptPasswordEncoder.matches(oldpassword, user.getPaypassword());
+        if (!matches) {
+            throw new IllegalArgumentException("用户的原始密码不正确");
+        }
+        // 校验手机验证码 // 数据库中的模板代码CHANGE_PAY_PWD_VERIFY
+        String validateCode = updateLoginParam.getValidateCode();
+        String phoneValidateCode = stringRedisTemplate.opsForValue().get("SMS:CHANGE_PAY_PWD_VERIFY:" + user.getMobile());
+        if (!validateCode.equals(phoneValidateCode)) {
+            throw new IllegalArgumentException("手机验证码错误");
+        }
+        user.setPaypassword(updateLoginParam.getNewpassword());
+        return updateById(user);
     }
 
     private void checkForm(UserAuthForm userAuthForm) {

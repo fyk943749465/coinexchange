@@ -6,6 +6,7 @@ import com.bjsxt.domain.User;
 import com.bjsxt.domain.UserAuthAuditRecord;
 import com.bjsxt.domain.UserAuthInfo;
 import com.bjsxt.model.R;
+import com.bjsxt.model.UpdateLoginParam;
 import com.bjsxt.model.UpdatePhoneParam;
 import com.bjsxt.model.UserAuthForm;
 import com.bjsxt.service.UserAuthAuditRecordService;
@@ -266,5 +267,28 @@ public class UserController {
             return R.ok();
         }
         return R.fail("新手机号码已被使用");
+    }
+
+    @PostMapping("/updateLoginPassword")
+    @ApiOperation(value = "修改用户的登录密码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "updateLoginParam", value = "用户密码的json数据")
+    })
+    public R updateLoginPwd(@RequestBody @Validated UpdateLoginParam updateLoginParam) {
+        String idStr = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        boolean isOk = userService.updateUserPwd(Long.valueOf(idStr), updateLoginParam);
+        return isOk ? R.ok() : R.fail("修改密码失败");
+    }
+
+
+    @PostMapping("/updatePayPassword")
+    @ApiOperation(value = "修改用户的交易密码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "updateLoginParam", value = "用户密码的json数据")
+    })
+    public R updateLoginPayPwd(@RequestBody @Validated UpdateLoginParam updateLoginParam) {
+        String idStr = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        boolean isOk = userService.updateUserPayPwd(Long.valueOf(idStr), updateLoginParam);
+        return isOk ? R.ok() : R.fail("修改密码失败");
     }
 }
