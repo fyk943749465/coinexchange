@@ -223,7 +223,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (!validateCode.equals(phoneValidateCode)) {
             throw new IllegalArgumentException("手机验证码错误");
         }
-        user.setPassword(updateLoginParam.getNewpassword());
+        user.setPassword(bCryptPasswordEncoder.encode(updateLoginParam.getNewpassword()));
         return updateById(user);
     }
 
@@ -246,7 +246,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (!validateCode.equals(phoneValidateCode)) {
             throw new IllegalArgumentException("手机验证码错误");
         }
-        user.setPaypassword(updateLoginParam.getNewpassword());
+        user.setPaypassword(bCryptPasswordEncoder.encode(updateLoginParam.getNewpassword()));
         return updateById(user);
     }
 
