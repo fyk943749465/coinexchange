@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -64,5 +65,18 @@ public class UserBankController {
             return R.ok() ;
         }
         return R.fail("银行卡状态修改失败") ;
+    }
+
+    /**
+     * 查询当前用户的银行卡,银行卡默认只能查到一张，因为如果要让别人转账的时候，别人看到多张银行卡，就会有疑问，
+     * 还要再次确认要转到哪一张银行卡里。
+     * @return
+     */
+    @GetMapping("/current")
+    @ApiOperation(value = "查询当前用户的银行卡")
+    public R<UserBank> getCurrentUserBank() {
+        String idStr = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        UserBank userBank = userBankService.getCurrentUserBank(Long.valueOf(idStr));
+        return R.ok(userBank);
     }
 }
