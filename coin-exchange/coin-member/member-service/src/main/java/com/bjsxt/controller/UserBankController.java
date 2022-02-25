@@ -79,4 +79,16 @@ public class UserBankController {
         UserBank userBank = userBankService.getCurrentUserBank(Long.valueOf(idStr));
         return R.ok(userBank);
     }
+
+    /**
+     * 如果用户能够提供id，即前端提交过来的数据有银行卡id，则认为是更换银行卡
+     * 如果没有提供银行卡id，那么则认为是新增操作
+     */
+    @PostMapping("/bind")
+    @ApiOperation(value = "绑定银行卡")
+    public R bindBank(@RequestBody @Validated UserBank userBank) {
+        String idStr = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        boolean isOk = userBankService.bind(Long.valueOf(idStr), userBank);
+        return isOk ? R.ok() : R.fail("绑定银行卡失败");
+    }
 }

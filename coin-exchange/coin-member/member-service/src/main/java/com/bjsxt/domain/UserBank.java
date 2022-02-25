@@ -61,7 +61,6 @@ public class UserBank {
      */
     @TableField(value = "bank_prov")
     @ApiModelProperty(value="开户省")
-    @NotBlank
     private String bankProv;
 
     /**
@@ -69,7 +68,6 @@ public class UserBank {
      */
     @TableField(value = "bank_city")
     @ApiModelProperty(value="开户市")
-    @NotBlank
     private String bankCity;
 
     /**
@@ -108,4 +106,9 @@ public class UserBank {
     @TableField(value = "created", fill = FieldFill.INSERT)
     @ApiModelProperty(value="创建时间")
     private Date created;
+
+    @ApiModelProperty(value = "交易密码")
+    @TableField(exist = false)
+    @NotBlank
+    private String payPassword;
 }

@@ -14,4 +14,12 @@ public interface UserBankService extends IService<UserBank>{
      * @return
      */
     UserBank getCurrentUserBank(Long valueOf);
+
+    /**
+     * 绑定用户的银行卡
+     * @param valueOf
+     * @param userBank
+     * @return
+     */
+    boolean bind(Long valueOf, UserBank userBank);
 }
