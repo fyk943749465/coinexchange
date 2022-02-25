@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -266,6 +267,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         user.setPaypassword(bCryptPasswordEncoder.encode(unsetPayPassword.getPayPassword()));
         return updateById(user);
+    }
+
+    @Override
+    public List<User> getUserInvites(Long userId) {
+        List<User> list = list(new LambdaQueryWrapper<User>().eq(User::getDirectInviteid, userId));
+        if (CollectionUtils.isEmpty(list) ) {
+            return Collections.emptyList();
+        }
+        list.forEach(user -> {
+            user.setPassword("**********");
+            user.setPaypassword("**********");
+            user.setAccessKeyId("***********");
+            user.setAccessKeySecret("**********");
+        });
+        return list;
     }
 
     private void checkForm(UserAuthForm userAuthForm) {

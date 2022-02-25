@@ -62,4 +62,6 @@ public interface UserService extends IService<User>{
      * @return
      */
     boolean unsetPayPassword(Long valueOf, UnsetPayPassword unsetPayPassword);
+
+    List<User> getUserInvites(Long userId);
 }

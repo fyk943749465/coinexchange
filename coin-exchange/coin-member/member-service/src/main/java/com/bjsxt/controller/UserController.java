@@ -298,4 +298,15 @@ public class UserController {
         return isOk ? R.ok() : R.fail("重置密码失败");
 
     }
+
+    /**
+     * 获取用户的邀请列表，不是分页查询
+     */
+    @GetMapping("/invites")
+    public R<List<User>> getUserInvites() {
+        Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+        List<User> invites = userService.getUserInvites(userId);
+        return R.ok(invites);
+
+    }
 }
