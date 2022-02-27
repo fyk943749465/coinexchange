@@ -325,4 +325,11 @@ public class UserController implements UserServiceFeign {
         Map<Long, UserDto> userDtoMap = userService.getBasicUsers(ids, userName, mobile);
         return userDtoMap;
     }
+
+    @PostMapping("/register")
+    @ApiOperation(value = "用户注册")
+    public R register(@RequestBody @Validated RegisterParam registerParam) {
+        boolean isOk = userService.register(registerParam);
+        return isOk ? R.ok() : R.fail();
+    }
 }

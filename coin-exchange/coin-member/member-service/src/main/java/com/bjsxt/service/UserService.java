@@ -4,10 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bjsxt.domain.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.bjsxt.dto.UserDto;
-import com.bjsxt.model.UnsetPayPassword;
-import com.bjsxt.model.UpdateLoginParam;
-import com.bjsxt.model.UpdatePhoneParam;
-import com.bjsxt.model.UserAuthForm;
+import com.bjsxt.model.*;
 
 import java.util.List;
 import java.util.Map;
@@ -68,4 +65,11 @@ public interface UserService extends IService<User>{
     List<User> getUserInvites(Long userId);
 
     Map<Long, UserDto> getBasicUsers(List<Long> ids, String userName, String mobile);
+
+    /**
+     * 用户的注册
+     * @param registerParam
+     * @return
+     */
+    boolean register(RegisterParam registerParam);
 }

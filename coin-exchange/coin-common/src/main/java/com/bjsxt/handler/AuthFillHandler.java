@@ -22,7 +22,7 @@ public class AuthFillHandler implements MetaObjectHandler {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
             String s = authentication.getPrincipal().toString();
-            if ("anonymousUser".equals(s)) {
+            if ("anonymousUser".equals(s)) { // 用户没有登录时，访问就是匿名用户，即anonymousUser
                 return null;
             }
             return Long.valueOf(s);

@@ -1,6 +1,8 @@
 package com.bjsxt.service.impl;
 
 import cn.hutool.core.lang.Snowflake;
+import cn.hutool.core.util.RandomUtil;
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -12,10 +14,7 @@ import com.bjsxt.domain.UserAuthInfo;
 import com.bjsxt.dto.UserDto;
 import com.bjsxt.mapper.UserMapper;
 import com.bjsxt.mappers.UserDtoMapper;
-import com.bjsxt.model.UnsetPayPassword;
-import com.bjsxt.model.UpdateLoginParam;
-import com.bjsxt.model.UpdatePhoneParam;
-import com.bjsxt.model.UserAuthForm;
+import com.bjsxt.model.*;
 import com.bjsxt.sdk.geetest.GeetestLib;
 import com.bjsxt.service.SmsService;
 import com.bjsxt.service.UserAuthAuditRecordService;
@@ -301,6 +300,54 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         List<UserDto> userDtos = UserDtoMapper.INSTANCE.convert2Dto(list);
         Map<Long, UserDto> userDtoIdMappings = userDtos.stream().collect(Collectors.toMap(UserDto::getId, userDto -> userDto));
         return userDtoIdMappings;
+    }
+
+    @Override
+    public boolean register(RegisterParam registerParam) {
+        log.info("用户开始注册{}", JSON.toJSONString(registerParam));
+        String mobile = registerParam.getMobile();
+        String email = registerParam.getEmail();
+        // 1. 简单校验
+        if (StringUtils.isEmpty(mobile) && StringUtils.isEmpty(email)) {
+            throw new IllegalArgumentException("手机号和邮箱不能同时为空");
+        }
+        // 2 查询校验
+        int count = count(new LambdaQueryWrapper<User>()
+                .eq(!StringUtils.isEmpty(email), User::getEmail, email)
+                .eq(!StringUtils.isEmpty(mobile), User::getMobile, mobile)
+        );
+        if (count > 0) {
+            throw new IllegalArgumentException("手机号或邮箱已经被注册");
+        }
+        // 进行极验的校验
+        registerParam.check(geetestLib, redisTemplate);
+
+        User user = getUser(registerParam);
+
+        return save(user);
+    }
+
+    private User getUser(RegisterParam registerParam) {
+        User user = new User();
+        user.setEmail(registerParam.getEmail());
+        user.setMobile(registerParam.getMobile());
+        String encode =new BCryptPasswordEncoder().encode(registerParam.getPassword());
+        user.setPassword(encode);
+        user.setPaypassSetting(false); // 是否设置了支付密码
+        user.setStatus((byte)1); // 要设置为1，否则用户是禁用状态，无法登录的
+        user.setType((byte)1); // 普通用户
+        user.setAuthStatus((byte)0); // 认证状态：未认证
+        user.setLogins(0);
+        user.setInviteCode(RandomUtil.randomString(6)); // 用户的邀请码，是一个随机生成的6位码
+
+        if (!StringUtils.isEmpty(registerParam.getInvitionCode())) {
+            User userPre = getOne(new LambdaQueryWrapper<User>().eq(User::getInviteCode, registerParam.getInvitionCode()));
+            if (userPre != null) {
+                user.setDirectInviteid(String.valueOf(userPre.getId())); // 邀请人的id,需要查询
+                user.setInviteRelation(String.valueOf(userPre.getId())); // 与邀请人的关系，需要查询
+            }
+        }
+        return user;
     }
 
     private void checkForm(UserAuthForm userAuthForm) {

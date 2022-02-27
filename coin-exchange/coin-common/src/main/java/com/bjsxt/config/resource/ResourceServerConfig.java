@@ -27,7 +27,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers(
                         "/markets/kline/**" ,
                         "/users/setPassword" ,
-                        "/users/register",
+                        "/users/register",  // 资源服务器中放行用户注册的地址
                         "/sms/sendTo",
                         "/gt/register" ,
                         "/login" ,
