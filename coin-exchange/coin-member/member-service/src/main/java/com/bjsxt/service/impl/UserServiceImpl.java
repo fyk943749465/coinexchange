@@ -3,10 +3,15 @@ package com.bjsxt.service.impl;
 import cn.hutool.core.lang.Snowflake;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.bjsxt.config.IdAutoConfiguration;
 import com.bjsxt.domain.Sms;
+import com.bjsxt.domain.User;
 import com.bjsxt.domain.UserAuthAuditRecord;
 import com.bjsxt.domain.UserAuthInfo;
+import com.bjsxt.dto.UserDto;
+import com.bjsxt.mapper.UserMapper;
+import com.bjsxt.mappers.UserDtoMapper;
 import com.bjsxt.model.UnsetPayPassword;
 import com.bjsxt.model.UpdateLoginParam;
 import com.bjsxt.model.UpdatePhoneParam;
@@ -15,6 +20,7 @@ import com.bjsxt.sdk.geetest.GeetestLib;
 import com.bjsxt.service.SmsService;
 import com.bjsxt.service.UserAuthAuditRecordService;
 import com.bjsxt.service.UserAuthInfoService;
+import com.bjsxt.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -22,20 +28,14 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import javax.annotation.Resource;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.bjsxt.domain.User;
-import com.bjsxt.mapper.UserMapper;
-import com.bjsxt.service.UserService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+
+import java.io.Serializable;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -284,6 +284,25 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return list;
     }
 
+    @Override
+    public Map<Long, UserDto> getBasicUsers(List<Long> ids, String userName, String mobile) {
+        if (CollectionUtils.isEmpty(ids) && StringUtils.isEmpty(userName) && StringUtils.isEmpty(mobile)) {
+            return Collections.emptyMap();
+        }
+        List<User> list = list(new LambdaQueryWrapper<User>()
+                .in(!CollectionUtils.isEmpty(ids), User::getId, ids)
+                .like(!StringUtils.isEmpty(userName), User::getUsername, userName)
+                .like(!StringUtils.isEmpty(mobile), User::getMobile, mobile));
+
+        if (CollectionUtils.isEmpty(list)) {
+            return Collections.emptyMap();
+        }
+        // 将user 转换为Dto
+        List<UserDto> userDtos = UserDtoMapper.INSTANCE.convert2Dto(list);
+        Map<Long, UserDto> userDtoIdMappings = userDtos.stream().collect(Collectors.toMap(UserDto::getId, userDto -> userDto));
+        return userDtoIdMappings;
+    }
+
     private void checkForm(UserAuthForm userAuthForm) {
         userAuthForm.check(geetestLib, redisTemplate);
     }
@@ -328,4 +347,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setSeniorAuthDesc(seniorAuthDesc);
         return user;
     }
+
+
 }

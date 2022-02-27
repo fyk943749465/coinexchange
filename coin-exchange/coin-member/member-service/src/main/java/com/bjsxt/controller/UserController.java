@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bjsxt.domain.User;
 import com.bjsxt.domain.UserAuthAuditRecord;
 import com.bjsxt.domain.UserAuthInfo;
+import com.bjsxt.dto.UserDto;
+import com.bjsxt.feign.UserServiceFeign;
 import com.bjsxt.model.*;
 import com.bjsxt.service.UserAuthAuditRecordService;
 import com.bjsxt.service.UserAuthInfoService;
@@ -24,11 +26,12 @@ import springfox.documentation.annotations.ApiIgnore;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Api(tags = "会员管理")
 @RestController
 @RequestMapping("/users")
-public class UserController {
+public class UserController implements UserServiceFeign {
 
     @Autowired
     private UserService userService;
@@ -308,5 +311,18 @@ public class UserController {
         List<User> invites = userService.getUserInvites(userId);
         return R.ok(invites);
 
+    }
+
+    /**
+     * 用于admin-service里面的远程调用member-service
+     * @param ids
+     * @param userName
+     * @param mobile
+     * @return
+     */
+    @Override
+    public Map<Long, UserDto> getBasicUsers(List<Long> ids, String userName, String mobile) {
+        Map<Long, UserDto> userDtoMap = userService.getBasicUsers(ids, userName, mobile);
+        return userDtoMap;
     }
 }
