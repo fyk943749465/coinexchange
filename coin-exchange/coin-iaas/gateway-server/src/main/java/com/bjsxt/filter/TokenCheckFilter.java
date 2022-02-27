@@ -32,7 +32,14 @@ public class TokenCheckFilter implements GlobalFilter, Ordered {
     @Autowired
     private StringRedisTemplate redisTemplate;
 
-    @Value("${no.token.access.urls:/admin/login,/user/gt/register,/user/login,/user/users/register}") //网关放行注册地址
+    /**
+     * 需要网关放行的地址，网关放行后，我们的资源服务器也是需要放行这些地址的 在coin-common里
+     * /user/login 用户登录的地址，
+     * /user/users/register 用户注册的地址
+     * /sms/sendTo 发送短信验证码的地址
+     * /admin/login 后台管理人员登录的地址
+     */
+    @Value("${no.token.access.urls:/admin/login,/user/gt/register,/user/login,/user/users/register,/sms/sendTo}") //网关放行注册地址
     private Set<String> noTokenAccessUrls;
 
     @Override
