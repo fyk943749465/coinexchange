@@ -20,4 +20,9 @@ public class CoinTypeServiceImpl extends ServiceImpl<CoinTypeMapper, CoinType> i
         page.addOrder(OrderItem.desc("last_update_time"));
         return page(page, new LambdaQueryWrapper<CoinType>().like(!StringUtils.isEmpty(code), CoinType::getCode, code));
     }
+
+    @Override
+    public List<CoinType> listByStatus(Byte status) {
+        return list(new LambdaQueryWrapper<CoinType>().eq(!StringUtils.isEmpty(status), CoinType::getStatus, status));
+    }
 }
