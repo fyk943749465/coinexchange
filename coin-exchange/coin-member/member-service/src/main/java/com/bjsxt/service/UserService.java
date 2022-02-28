@@ -72,4 +72,11 @@ public interface UserService extends IService<User>{
      * @return
      */
     boolean register(RegisterParam registerParam);
+
+    /**
+     * 重置密码
+     * @param unsetPasswordParam
+     * @return
+     */
+    boolean unsetPassword(UnsetPasswordParam unsetPasswordParam);
 }

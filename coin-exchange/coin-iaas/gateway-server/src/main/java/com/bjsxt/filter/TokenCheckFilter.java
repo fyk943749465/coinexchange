@@ -38,8 +38,14 @@ public class TokenCheckFilter implements GlobalFilter, Ordered {
      * /user/users/register 用户注册的地址
      * /sms/sendTo 发送短信验证码的地址
      * /admin/login 后台管理人员登录的地址
+     * /user/users/setPassword 重置密码
      */
-    @Value("${no.token.access.urls:/admin/login,/user/gt/register,/user/login,/user/users/register,/sms/sendTo}") //网关放行注册地址
+    @Value("${no.token.access.urls:/admin/login," +
+            "/user/gt/register," +
+            "/user/login," +
+            "/user/users/register," +
+            "/sms/sendTo," +
+            "/user/users/setPassword}") //网关放行的url
     private Set<String> noTokenAccessUrls;
 
     @Override

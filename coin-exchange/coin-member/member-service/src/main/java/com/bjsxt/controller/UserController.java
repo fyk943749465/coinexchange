@@ -332,4 +332,17 @@ public class UserController implements UserServiceFeign {
         boolean isOk = userService.register(registerParam);
         return isOk ? R.ok() : R.fail();
     }
+
+    @PostMapping("/setPassword")
+    @ApiOperation(value = "用户重置密码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "unSetPasswordParam", value = "重置密码的json")
+    })
+    public R unsetPassword(@RequestBody @Validated UnsetPasswordParam unsetPasswordParam) {
+        boolean isOk = userService.unsetPassword(unsetPasswordParam);
+        if (isOk) {
+            return R.ok();
+        }
+        return R.fail("重重密码登录密码失败");
+    }
 }
