@@ -9,9 +9,9 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
@@ -34,5 +34,51 @@ public class CoinTypeController {
 
         Page<CoinType> pages = coinTypeService.findByPage(page, code);
         return R.ok(pages);
+    }
+
+    @PostMapping
+    @ApiOperation(value = "新增货币类型")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "CoinType", value = "CoinType 的json数据")
+    })
+    @PreAuthorize("hasAuthority('trade_coin_type_create')")
+    public R add(@RequestBody @Validated CoinType coinType) {
+        boolean save = coinTypeService.save(coinType);
+        if (save) {
+            return R.ok();
+        }
+        return R.fail("新增失败");
+    }
+
+
+    @PatchMapping
+    @ApiOperation(value = "修改货币类型")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "CoinType", value = "CoinType 的json数据")
+    })
+    @PreAuthorize("hasAutority('trade_coin_type_upate')")
+    public R update(@RequestBody @Validated CoinType coinType) {
+        boolean save = coinTypeService.updateById(coinType);
+        if (save) {
+            return R.ok();
+        }
+        return R.fail("修改失败");
+    }
+
+    // http://localhost:9528/finance/coinTypes/setStatus
+    @PostMapping("/setStatus")
+    @ApiOperation(value = "修改货币状态")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "coinType id"),
+            @ApiImplicitParam(name = "status", value = "状态")
+    })
+    @PreAuthorize("hasAutority('trade_coin_type_upate')")
+    public R setState(@RequestBody CoinType coinType) {
+
+        boolean save = coinTypeService.updateById(coinType);
+        if (save) {
+            return R.ok();
+        }
+        return R.fail("修改状态失败");
     }
 }
