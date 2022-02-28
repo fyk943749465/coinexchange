@@ -97,4 +97,7 @@ public class CoinTypeController {
         List<CoinType> coinTypes = coinTypeService.listByStatus(status);
         return R.ok(coinTypes);
     }
+
+
+
 }
