@@ -55,7 +55,7 @@ public class CoinController {
         return R.fail("设置状态失败");
     }
 
-    @GetMapping("/info{id}")
+    @GetMapping("/info/{id}")
     @ApiOperation(value = "查询币种的详细信息")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "币种的id")
