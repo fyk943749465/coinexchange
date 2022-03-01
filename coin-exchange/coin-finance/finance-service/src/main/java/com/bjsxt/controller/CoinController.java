@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -76,5 +77,30 @@ public class CoinController {
         return R.ok(coins);
     }
 
+    @PatchMapping
+    @ApiOperation(value = "修改我们的币种信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "coin", value = "coin 的json数据")
+    })
+    public R update(@RequestBody @Validated Coin coin) {
+        boolean isOk = coinService.updateById(coin);
+        if (isOk) {
+            return R.ok();
+        }
+        return R.fail("修改币种配置信息失败");
+    }
+
+    @PostMapping
+    @ApiOperation(value = "新增我们的币种信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "coin", value = "coin的json数据")
+    })
+    public R save(@RequestBody @Validated Coin coin) {
+        boolean isOk = coinService.save(coin);
+        if (isOk) {
+            return R.ok();
+        }
+        return R.fail("新增币种配置信息失败");
+    }
 
 }
