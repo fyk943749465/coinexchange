@@ -10,10 +10,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/coins")
@@ -41,6 +38,18 @@ public class CoinController {
 
         Page<Coin> coinPage = coinService.findByPage(name, type, status, title, walletType, page);
         return R.ok(coinPage);
+    }
 
+    @PostMapping("/setStatus")
+    @ApiOperation(value = "禁用或启用币种")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Coin", value = "Coin 的json数据")
+    })
+    public R setStatus(@RequestBody Coin coin) {
+        boolean isOk = coinService.updateById(coin);
+        if(isOk) {
+            return R.ok();
+        }
+        return R.fail("设置状态失败");
     }
 }
