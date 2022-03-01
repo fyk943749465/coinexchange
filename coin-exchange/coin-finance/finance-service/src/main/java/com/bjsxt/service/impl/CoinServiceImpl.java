@@ -25,4 +25,9 @@ public class CoinServiceImpl extends ServiceImpl<CoinMapper, Coin> implements Co
                 .eq(!StringUtils.isEmpty(walletType), Coin::getWallet, walletType) //数字货币钱包类型的查询
         );
     }
+
+    @Override
+    public List<Coin> getCoinByStatus(Byte status) {
+        return list(new LambdaQueryWrapper<Coin>().eq(Coin::getStatus, status));
+    }
 }

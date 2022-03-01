@@ -12,6 +12,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/coins")
 @Api(tags = "数字货币的数据接口")
@@ -63,5 +65,16 @@ public class CoinController {
         Coin coin = coinService.getById(id);
         return R.ok(coin);
     }
+
+    @GetMapping("/all")
+    @ApiImplicitParams({
+          @ApiImplicitParam(name = "status", value = "币种当前的状态")
+    })
+    @ApiOperation(value = "通过状态查询所有的币种信息")
+    public R<List<Coin>> getCoinAll(Byte status) {
+        List<Coin> coins = coinService.getCoinByStatus(status);
+        return R.ok(coins);
+    }
+
 
 }
