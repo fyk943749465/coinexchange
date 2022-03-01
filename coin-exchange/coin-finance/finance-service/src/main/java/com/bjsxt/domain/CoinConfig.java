@@ -11,6 +11,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 /**
     * 币种配置信息
     */
@@ -23,8 +26,9 @@ public class CoinConfig {
     /**
      * 币种ID(对应coin表ID)
      */
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.INPUT)
     @ApiModelProperty(value="币种ID(对应coin表ID)")
+    @NotNull
     private Long id;
 
     /**
@@ -32,6 +36,7 @@ public class CoinConfig {
      */
     @TableField(value = "`name`")
     @ApiModelProperty(value="币种名称")
+    @NotBlank
     private String name;
 
     /**
@@ -39,6 +44,7 @@ public class CoinConfig {
      */
     @TableField(value = "coin_type")
     @ApiModelProperty(value="btc-比特币系列；eth-以太坊；ethToken-以太坊代币；etc-以太经典；\r\n\r\n")
+    @NotBlank
     private String coinType;
 
     /**
@@ -46,6 +52,7 @@ public class CoinConfig {
      */
     @TableField(value = "credit_limit")
     @ApiModelProperty(value="钱包最低留存的币")
+    @NotNull
     private BigDecimal creditLimit;
 
     /**
@@ -60,6 +67,7 @@ public class CoinConfig {
      */
     @TableField(value = "rpc_ip")
     @ApiModelProperty(value="rpc服务ip")
+    @NotBlank
     private String rpcIp;
 
     /**
@@ -67,6 +75,7 @@ public class CoinConfig {
      */
     @TableField(value = "rpc_port")
     @ApiModelProperty(value="rpc服务port")
+    @NotBlank
     private String rpcPort;
 
     /**
