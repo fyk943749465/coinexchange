@@ -11,4 +11,6 @@ public interface CoinConfigService extends IService<CoinConfig>{
      * @return
      */
     CoinConfig findByCoinId(Long coinId);
+
+    boolean saveOrUpdate(CoinConfig entity);
 }

@@ -70,6 +70,6 @@ public class AdminAddress {
      */
     @TableField(value = "coin_type")
     @ApiModelProperty(value="类型")
-    @NotBlank
+    // @NotBlank
     private String coinType;
 }

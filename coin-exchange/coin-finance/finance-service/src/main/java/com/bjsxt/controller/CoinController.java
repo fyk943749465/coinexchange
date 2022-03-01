@@ -95,10 +95,10 @@ public class CoinController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "coin", value = "coin的json数据")
     })
-    public R save(@RequestBody @Validated Coin coin) {
+    public R<Coin> save(@RequestBody @Validated Coin coin) {
         boolean isOk = coinService.save(coin);
         if (isOk) {
-            return R.ok();
+            return R.ok(coin);
         }
         return R.fail("新增币种配置信息失败");
     }
