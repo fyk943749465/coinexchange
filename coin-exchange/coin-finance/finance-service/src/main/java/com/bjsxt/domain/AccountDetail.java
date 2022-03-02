@@ -65,7 +65,7 @@ public class AccountDetail {
      */
     @TableField(value = "direction")
     @ApiModelProperty(value="入账为1，出账为2")
-    private Boolean direction;
+    private Byte direction;
 
     /**
      * 业务类型:
@@ -120,4 +120,35 @@ public class AccountDetail {
     @TableField(value = "created")
     @ApiModelProperty(value="日期")
     private Date created;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "用户的名称")
+    private String username  ;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "用户的真实名称")
+    private String realName ;
+
+
+    public AccountDetail(Long userId,
+                         Long coinId,
+                         Long accountId,
+                         Long refAccountId,
+                         Long orderId,
+                         Integer direction,
+                         String businessType,
+                         BigDecimal amount,
+                         BigDecimal fee,
+                         String remark) {
+        this.userId = userId;
+        this.coinId = coinId;
+        this.accountId = accountId;
+        this.refAccountId = refAccountId;
+        this.orderId = orderId;
+        this.direction = direction.byteValue();
+        this.businessType = businessType;
+        this.amount = amount;
+        this.fee = fee;
+        this.remark = remark;
+    }
 }
