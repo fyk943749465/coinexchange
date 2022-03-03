@@ -146,4 +146,11 @@ public class CashWithdrawalsServiceImpl extends ServiceImpl<CashWithdrawalsMappe
 
         return isOk;
     }
+
+    @Override
+    public Page<CashWithdrawals> findCashWithdrawals(Page<CashWithdrawals> page, Long userId, Byte status) {
+        return page(page, new LambdaQueryWrapper<CashWithdrawals>()
+                .eq(CashWithdrawals::getUserId, userId)
+                .eq(status != null, CashWithdrawals::getStatus, status));
+    }
 }

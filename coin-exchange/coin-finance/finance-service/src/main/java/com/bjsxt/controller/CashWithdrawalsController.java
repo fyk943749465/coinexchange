@@ -8,6 +8,7 @@ import com.bjsxt.service.CashWithdrawalsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -54,5 +55,20 @@ public class CashWithdrawalsController {
         Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
         boolean isOk =  cashWithdrawalsService.updateWithdrawalsStatus(userId ,cashWithdrawAuditRecord) ;
         return isOk ? R.ok():R.fail("审核失败") ;
+    }
+
+
+
+    @GetMapping("/user/records")
+    @ApiOperation(value = "查询当前用户的提现记录")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "current", value = "当前页"),
+            @ApiImplicitParam(name = "size", value = "每页显示的大小"),
+            @ApiImplicitParam(name = "status", value = "充值的状态"),
+    })
+    public R<Page<CashWithdrawals>> findUserCashRecharge(@ApiIgnore Page<CashWithdrawals> page, Byte status) {
+        Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+        Page<CashWithdrawals> cashWithdrawalsPage = cashWithdrawalsService.findCashWithdrawals(page, userId, status);
+        return R.ok(cashWithdrawalsPage);
     }
 }
