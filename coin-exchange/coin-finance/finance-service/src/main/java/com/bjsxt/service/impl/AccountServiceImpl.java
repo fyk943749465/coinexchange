@@ -2,7 +2,11 @@ package com.bjsxt.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.bjsxt.domain.AccountDetail;
+import com.bjsxt.domain.Coin;
+import com.bjsxt.domain.Config;
 import com.bjsxt.service.AccountDetailService;
+import com.bjsxt.service.CoinService;
+import com.bjsxt.service.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
@@ -19,6 +23,12 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
 
     @Autowired
     private AccountDetailService accountDetailService;
+
+    @Autowired
+    private CoinService coinService;
+
+    @Autowired
+    private ConfigService configService;
     /**
      * 获取用户的某种币的资产
      *
@@ -105,5 +115,35 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
             }
         }
         return false;
+    }
+
+    /**
+     * 查询某个用户的货币资产
+     *
+     * @param userId   用户的id
+     * @param coinName 货币的名称
+     * @return
+     */
+    @Override
+    public Account findByUserAndCoin(Long userId, String coinName) {
+        Coin coin = coinService.getCoinByCoinName(coinName);
+        if (coin == null) {
+            throw new IllegalArgumentException("货币不存在");
+        }
+        Account account = getOne(new LambdaQueryWrapper<Account>()
+                .eq(Account::getUserId, userId)
+                .eq(Account::getCoinId, coin.getId())
+        );
+        if (account == null) {
+            throw new IllegalArgumentException("该资产不存在");
+        }
+
+        Config sellRateConfig = configService.getConfigByCode("USDT2CNY");
+        account.setSellRate(new BigDecimal(sellRateConfig.getValue())); // 出售的费率
+
+        Config setBuyRateConfig = configService.getConfigByCode("CNY2USDT");
+        account.setBuyRate(new BigDecimal(setBuyRateConfig.getValue())); // 买进来的费率
+
+        return account;
     }
 }
