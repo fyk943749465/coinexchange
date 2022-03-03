@@ -1,6 +1,7 @@
 package com.bjsxt.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.bjsxt.domain.CashWithdrawAuditRecord;
 import com.bjsxt.domain.CashWithdrawals;
 import com.bjsxt.model.R;
 import com.bjsxt.service.CashWithdrawalsService;
@@ -8,9 +9,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
@@ -42,5 +42,17 @@ public class CashWithdrawalsController {
 
         Page<CashWithdrawals> pageData = cashWithdrawalsService.findByPage(page, userId, userName, mobile, status, numMin, numMax, startTime, endTime);
         return R.ok(pageData);
+    }
+
+    /**
+     * 场外交易体现审核
+     * @param cashWithdrawAuditRecord
+     * @return
+     */
+    @PostMapping("/updateWithdrawalsStatus")
+    public R updateWithdrawalsStatus(@RequestBody CashWithdrawAuditRecord cashWithdrawAuditRecord){
+        Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+        boolean isOk =  cashWithdrawalsService.updateWithdrawalsStatus(userId ,cashWithdrawAuditRecord) ;
+        return isOk ? R.ok():R.fail("审核失败") ;
     }
 }

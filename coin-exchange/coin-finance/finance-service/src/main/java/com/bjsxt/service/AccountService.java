@@ -22,4 +22,5 @@ public interface AccountService extends IService<Account>{
      */
     Boolean transferAccountAmount(Long adminId, Long userId, Long coinId,Long orderNum , BigDecimal num, BigDecimal fee,String remark,String businessType,Byte direction);
 
+    Boolean decreaseAccountAmount(Long userId, Long userId1, Long coinId, Long id, BigDecimal num, BigDecimal fee, String remark, String withdrawals_out, byte b);
 }
