@@ -1,14 +1,13 @@
 import request from '@/utils/request'
-import {formUtils} from '@/utils/formUtil'
+import { formUtils } from '@/utils/formUtil'
 export const financeApi = {
-
 
   /**
    * 场外交易充值管理列表
    */
   getFinanceRechargeList(form, current, size) {
-    let params = {}
-    formUtils.formDateRange(params,form);
+    const params = {}
+    formUtils.formDateRange(params, form)
     params.current = current
     params.size = size
     return request({
@@ -21,11 +20,11 @@ export const financeApi = {
   /**
   * cny 充值审核操作
   */
-  checkFinanceRecharge(data){
+  checkFinanceRecharge(data) {
     return request({
-      url:'/finance/cashRecharge/cashRechargeUpdateStatus',
-      method:'post',
-      data:data
+      url: '/finance/cashRecharges/cashRechargeUpdateStatus',
+      method: 'post',
+      data: data
     })
   },
 
@@ -33,8 +32,8 @@ export const financeApi = {
   * 场外交易提现审核列表
   */
   getFinanceWithdrawalsList(form, current, size) {
-    let params = {}
-    formUtils.formDateRange(params,form);
+    const params = {}
+    formUtils.formDateRange(params, form)
     params.current = current
     params.size = size
     return request({
@@ -47,20 +46,20 @@ export const financeApi = {
   /**
   * cny 提现审核操作
   **/
-  checkFinanceWithdrawals(data){
+  checkFinanceWithdrawals(data) {
     return request({
-      url:'/finance/cashWithdrawals/updateWithdrawalsStatus',
-      method:'post',
-      data:data
+      url: '/finance/cashWithdrawals/updateWithdrawalsStatus',
+      method: 'post',
+      data: data
     })
   },
 
   /**
   * 虚拟币提现列表
   */
-  getCoinWithdraw(form,current,size){
-    let params = {}
-    formUtils.formDateRange(params,form);
+  getCoinWithdraw(form, current, size) {
+    const params = {}
+    formUtils.formDateRange(params, form)
     params.current = current
     params.size = size
     return request({
@@ -73,19 +72,19 @@ export const financeApi = {
   /**
   * 虚拟币审核操作
   */
-  checkCoinWithdraw(data){
+  checkCoinWithdraw(data) {
     return request({
-      url:'/finance/coinWithdraws/audit',
-      method:'post',
-      data:data
+      url: '/finance/coinWithdraws/audit',
+      method: 'post',
+      data: data
     })
   },
   /* 手动打款接口*/
-  manualWithdraw(data){
+  manualWithdraw(data) {
     return request({
       url: '/finance/coinWithdraws',
-      method:'patch',
-      data:data
+      method: 'patch',
+      data: data
     })
   },
 
@@ -93,14 +92,14 @@ export const financeApi = {
   * 虚拟币充值列表
   */
   getCoinRecharge(form, current, size) {
-    let params = {}
-    formUtils.formDateRange(params,form);
+    const params = {}
+    formUtils.formDateRange(params, form)
     params.current = current
     params.size = size
     return request({
-      url:'/finance/coinRecharges/records',
-      method:'get',
-      params:params
+      url: '/finance/coinRecharges/records',
+      method: 'get',
+      params: params
     })
   }
 }

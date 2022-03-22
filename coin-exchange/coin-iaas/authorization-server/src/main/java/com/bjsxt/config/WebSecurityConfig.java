@@ -42,9 +42,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public static void main(String[] args) throws UnsupportedEncodingException, NoSuchAlgorithmException {
 
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        String s = encrypByMD5("123456");
+        String s = encrypByMD5("12345678");
         System.out.println(s);
-        String encode = bCryptPasswordEncoder.encode(s);
+        String encode = bCryptPasswordEncoder.encode(s.toLowerCase());
         String encode2 = bCryptPasswordEncoder.encode("e10adc3949ba59abbe56e057f20f883e");
         System.out.println(encode);
         System.out.println(encode2);

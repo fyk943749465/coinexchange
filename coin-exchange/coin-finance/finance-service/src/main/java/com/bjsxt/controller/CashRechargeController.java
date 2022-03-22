@@ -3,9 +3,11 @@ package com.bjsxt.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bjsxt.domain.CashRecharge;
 import com.bjsxt.domain.CashRechargeAuditRecord;
+import com.bjsxt.model.CashParam;
 import com.bjsxt.model.R;
 import com.bjsxt.service.CashRechargeService;
 import com.bjsxt.util.ReportCsvUtils;
+import com.bjsxt.vo.CashTradeVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -13,6 +15,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.CollectionUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -212,5 +215,16 @@ public class CashRechargeController {
         Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
         Page<CashRecharge> cashRechargePage = cashRechargeService.findUserCashRecharge(page, userId, status);
         return R.ok(cashRechargePage);
+    }
+
+    @PostMapping("/buy")
+    @ApiOperation(value = "GCN的充值操作")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cashParam", value = "现金交易的参数")
+    })
+    public R<Object> buy(@RequestBody @Validated CashParam cashParam) {
+        Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+        CashTradeVo cashTradeVo = cashRechargeService.buy(userId, cashParam);
+        return R.ok(cashTradeVo);
     }
 }

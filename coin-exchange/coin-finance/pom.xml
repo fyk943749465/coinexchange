@@ -10,7 +10,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>coin-finance</artifactId>
-
+    <packaging>pom</packaging>
+    <modules>
+        <module>finance-api</module>
+        <module>finance-service</module>
+    </modules>
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>

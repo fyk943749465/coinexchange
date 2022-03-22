@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bjsxt.domain.CashRecharge;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.bjsxt.domain.CashRechargeAuditRecord;
+import com.bjsxt.model.CashParam;
+import com.bjsxt.vo.CashTradeVo;
 
 public interface CashRechargeService extends IService<CashRecharge>{
 
@@ -23,4 +25,12 @@ public interface CashRechargeService extends IService<CashRecharge>{
      * @return
      */
     Page<CashRecharge> findUserCashRecharge(Page<CashRecharge> page, Long userId, Byte status);
+
+    /**
+     * 进行一个GCN充值/购买
+     * @param userId 用户的id
+     * @param cashParam 现金参数
+     * @return
+     */
+    CashTradeVo buy(Long userId, CashParam cashParam);
 }

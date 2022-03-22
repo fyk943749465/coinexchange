@@ -16,9 +16,9 @@ import javax.validation.constraints.NotBlank;
     * 人民币充值卡号管理
     */
 @ApiModel(value="人民币充值卡号管理")
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 @TableName(value = "admin_bank")
 public class AdminBank {
     /**
@@ -72,4 +72,5 @@ public class AdminBank {
     @TableField(value = "`status`")
     @ApiModelProperty(value="状态：0-无效；1-有效；")
     private Byte status;
+
 }

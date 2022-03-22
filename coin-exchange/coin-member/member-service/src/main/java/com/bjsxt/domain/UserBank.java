@@ -75,7 +75,6 @@ public class UserBank {
      */
     @TableField(value = "bank_addr")
     @ApiModelProperty(value="开户地址")
-    @NotBlank
     private String bankAddr;
 
     /**
