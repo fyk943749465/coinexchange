@@ -3,6 +3,7 @@ package com.bjsxt.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bjsxt.domain.Coin;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.bjsxt.dto.CoinDto;
 
 import java.util.List;
 
@@ -35,4 +36,6 @@ public interface CoinService extends IService<Coin>{
      * @return
      */
     Coin getCoinByCoinName(String coinName);
+
+    List<CoinDto> findList(List<Long> coinIds);
 }

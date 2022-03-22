@@ -31,6 +31,12 @@ spring:
             - Path=/finance/**
           filters:
             - StripPrefix=1     #当前端访问/finance/xx路径时，去掉前缀/finance
+        - id: exchange-service_router
+          uri: lb://exchange-service
+          predicates:
+            - Path=/exchange/**
+          filters:
+            - StripPrefix=1
         - id: test_router
           uri: http://www.aliyun.com
           predicates:

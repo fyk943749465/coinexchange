@@ -22,13 +22,9 @@
         <module>coin-admin</module>
         <module>coin-member</module>
         <module>coin-finance</module>
-        <module>coin-finance/finance-api</module>
-        <module>coin-finance/finance-service</module>
         <module>exchange-engine</module>
         <module>match-engine</module>
         <module>coin-statistics</module>
-        <module>coin-statistics/statistics-api</module>
-        <module>coin-statistics/statistics-service</module>
         <module>coin-task</module>
         <module>coin-chan</module>
     </modules>

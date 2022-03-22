@@ -3,6 +3,8 @@ package com.bjsxt.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bjsxt.domain.Coin;
 import com.bjsxt.domain.CoinServer;
+import com.bjsxt.dto.CoinDto;
+import com.bjsxt.feign.CoinServiceFeign;
 import com.bjsxt.model.R;
 import com.bjsxt.service.CoinService;
 import io.swagger.annotations.Api;
@@ -18,7 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/coins")
 @Api(tags = "数字货币的数据接口")
-public class CoinController {
+public class CoinController implements CoinServiceFeign {
 
     @Autowired
     private CoinService coinService;
@@ -103,4 +105,9 @@ public class CoinController {
         return R.fail("新增币种配置信息失败");
     }
 
+    @Override
+    public List<CoinDto> findCoins(List<Long> coinIds) {
+        List<CoinDto> coinDtos =  coinService.findList(coinIds) ;
+        return coinDtos;
+    }
 }
