@@ -7,7 +7,9 @@ import com.bjsxt.service.CoinRechargeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,5 +45,19 @@ public class CoinRechargeController {
         Page<CoinRecharge> pageData = coinRechargeService.findByPage(page, coinId, userId, userName,
                 mobile, status, numMin, numMax, startTime, endTime);
         return R.ok(pageData);
+    }
+
+    @GetMapping("/user/record")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "current" ,value = "当前页") ,
+            @ApiImplicitParam(name = "size" ,value = "显示的条数") ,
+            @ApiImplicitParam(name = "coinId" ,value = "币种的Id") ,
+
+    })
+    @ApiOperation(value = "查询用户某种币的Id")
+    public R<Page<CoinRecharge>> findUserCoinRecharge(@ApiIgnore Page<CoinRecharge> page ,Long coinId){
+        Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString()) ;
+        Page<CoinRecharge> pageData = coinRechargeService.findUserCoinRecharge(page ,coinId, userId) ;
+        return R.ok(pageData) ;
     }
 }
