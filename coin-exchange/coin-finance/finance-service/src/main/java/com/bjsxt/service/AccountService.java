@@ -2,6 +2,7 @@ package com.bjsxt.service;
 
 import com.bjsxt.domain.Account;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.bjsxt.vo.UserTotalAccountVo;
 
 import java.math.BigDecimal;
 
@@ -53,4 +54,6 @@ public interface AccountService extends IService<Account>{
      * @return
      */
     Account findByUserAndCoin(Long userId, String coinName);
+
+    UserTotalAccountVo getUserTotalAccount(Long userId);
 }

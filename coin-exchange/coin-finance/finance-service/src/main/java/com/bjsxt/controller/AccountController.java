@@ -3,6 +3,7 @@ package com.bjsxt.controller;
 import com.bjsxt.domain.Account;
 import com.bjsxt.model.R;
 import com.bjsxt.service.AccountService;
+import com.bjsxt.vo.UserTotalAccountVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -33,5 +34,13 @@ public class AccountController {
         Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
         Account account = accountService.findByUserAndCoin(userId, coinName);
         return R.ok(account);
+    }
+
+    @GetMapping("/total")
+    @ApiOperation(value = "计算用户的总资产")
+    public R<UserTotalAccountVo> total() {
+        Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+        UserTotalAccountVo userTotalAccountVo = accountService.getUserTotalAccount(userId);
+        return R.ok(userTotalAccountVo);
     }
 }

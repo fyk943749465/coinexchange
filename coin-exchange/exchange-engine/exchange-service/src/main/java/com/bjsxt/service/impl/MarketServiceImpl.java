@@ -4,8 +4,11 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bjsxt.dto.CoinDto;
+import com.bjsxt.dto.MarketDto;
 import com.bjsxt.feign.CoinServiceFeign;
+import com.bjsxt.mappers.MarketDtoMappers;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
@@ -89,5 +92,41 @@ public class MarketServiceImpl extends ServiceImpl<MarketMapper, Market> impleme
                 .eq(Market::getStatus, 1)
                 .orderByAsc(Market::getSort)
         );
+    }
+
+
+    /**
+     * 使用交易对查询市场
+     *
+     * @param symbol
+     * @return
+     */
+    @Override
+    public Market getMarkerBySymbol(String symbol) {
+        return getOne(new LambdaQueryWrapper<Market>().eq(Market::getSymbol, symbol));
+    }
+
+    /**
+     * 使用报价货币和基础货币查询市场
+     *
+     * @param buyCoinId
+     * @param sellCoinId
+     * @return
+     */
+    @Override
+    public MarketDto findByCoinId(Long buyCoinId, Long sellCoinId) {
+        LambdaQueryWrapper<Market> eq = new LambdaQueryWrapper<Market>()
+                .eq(Market::getBuyCoinId, buyCoinId)
+                .eq(Market::getSellCoinId, sellCoinId)
+                .eq(Market::getStatus, 1);
+        Market one = getOne(eq);
+        if (one == null) {
+            return null;
+        }
+
+        //MarketDto marketDto = MarketDtoMappers.INSTANCE.toConvertDto(one);\
+        MarketDto marketDto = new MarketDto();
+        BeanUtils.copyProperties(one, marketDto);
+        return marketDto;
     }
 }

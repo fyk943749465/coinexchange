@@ -2,6 +2,8 @@ package com.bjsxt.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bjsxt.domain.Market;
+import com.bjsxt.dto.MarketDto;
+import com.bjsxt.feign.MarketServiceFeign;
 import com.bjsxt.model.R;
 import com.bjsxt.service.MarketService;
 import io.swagger.annotations.Api;
@@ -18,7 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/markets")
 @Api(tags = "交易市场的控制器")
-public class MarketController {
+public class MarketController implements MarketServiceFeign {
 
     @Autowired
     private MarketService marketService;
@@ -67,5 +69,18 @@ public class MarketController {
     @ApiOperation(value = "查询所有的交易市场")
     public R<List<Market>> listMarks() {
         return R.ok(marketService.list());
+    }
+
+    /**
+     * 使用报价货币 以及 出售的货币的iD
+     *
+     * @param buyCoinId
+     * @param sellCoinId
+     * @return
+     */
+    @Override
+    public MarketDto findByCoinId(Long buyCoinId, Long sellCoinId) {
+        MarketDto marketDto = marketService.findByCoinId(buyCoinId, sellCoinId);
+        return marketDto;
     }
 }
