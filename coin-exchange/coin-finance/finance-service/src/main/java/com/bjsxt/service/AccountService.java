@@ -2,6 +2,7 @@ package com.bjsxt.service;
 
 import com.bjsxt.domain.Account;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.bjsxt.vo.SymbolAssetVo;
 import com.bjsxt.vo.UserTotalAccountVo;
 
 import java.math.BigDecimal;
@@ -56,4 +57,8 @@ public interface AccountService extends IService<Account>{
     Account findByUserAndCoin(Long userId, String coinName);
 
     UserTotalAccountVo getUserTotalAccount(Long userId);
+
+    SymbolAssetVo getSymbolAssert(String symbol, Long userId);
+
+    void lockUserAmount(Long userId, Long coinId, BigDecimal mum, String type, Long orderId, BigDecimal fee);
 }

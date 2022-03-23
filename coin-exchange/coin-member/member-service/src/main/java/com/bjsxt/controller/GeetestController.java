@@ -35,24 +35,25 @@ public class GeetestController {
             @ApiImplicitParam(name = "uuid", value = "用户验证的一个凭证")
     })
     public R<String> register(String uuid) {
-        //        GeetestLib gtLib = new GeetestLib(GeetestConfig.GEETEST_ID, GeetestConfig.GEETEST_KEY);
-        String digestmod = "md5";
-        Map<String, String> paramMap = new HashMap<String, String>();
-        paramMap.put("digestmod", digestmod);
-        paramMap.put("user_id", uuid);
-        paramMap.put("client_type", "web");
-        ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        paramMap.put("ip_address", IpUtil.getIpAddr(servletRequestAttributes.getRequest()));
-
-        GeetestLibResult result = geetestLib.register(digestmod, paramMap); // 极验服务器交互
-
-        // 将结果状态写到session中，此处register接口存入session，后续validate接口会取出使用
-        // 注意，此demo应用的session是单机模式，格外注意分布式环境下session的应用
-        redisTemplate.opsForValue().set(GeetestLib.GEETEST_SERVER_STATUS_SESSION_KEY, result.getStatus(), 180, TimeUnit.SECONDS);
-//        request.getSession().setAttribute( result.getStatus());
-        redisTemplate.opsForValue().set(GeetestLib.GEETEST_SERVER_USER_KEY + ":" + uuid, uuid, 180, TimeUnit.SECONDS);
-//        request.getSession().setAttribute("userId", userId);
-        // 注意，不要更改返回的结构和值类型
-        return R.ok(result.getData());
+//        //        GeetestLib gtLib = new GeetestLib(GeetestConfig.GEETEST_ID, GeetestConfig.GEETEST_KEY);
+//        String digestmod = "md5";
+//        Map<String, String> paramMap = new HashMap<String, String>();
+//        paramMap.put("digestmod", digestmod);
+//        paramMap.put("user_id", uuid);
+//        paramMap.put("client_type", "web");
+//        ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+//        paramMap.put("ip_address", IpUtil.getIpAddr(servletRequestAttributes.getRequest()));
+//
+//        GeetestLibResult result = geetestLib.register(digestmod, paramMap); // 极验服务器交互
+//
+//        // 将结果状态写到session中，此处register接口存入session，后续validate接口会取出使用
+//        // 注意，此demo应用的session是单机模式，格外注意分布式环境下session的应用
+//        redisTemplate.opsForValue().set(GeetestLib.GEETEST_SERVER_STATUS_SESSION_KEY, result.getStatus(), 180, TimeUnit.SECONDS);
+////        request.getSession().setAttribute( result.getStatus());
+//        redisTemplate.opsForValue().set(GeetestLib.GEETEST_SERVER_USER_KEY + ":" + uuid, uuid, 180, TimeUnit.SECONDS);
+////        request.getSession().setAttribute("userId", userId);
+//        // 注意，不要更改返回的结构和值类型
+//        return R.ok(result.getData());
+        return R.ok();
     }
 }

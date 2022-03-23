@@ -1,8 +1,10 @@
 package com.bjsxt.controller;
 
 import com.bjsxt.domain.Account;
+import com.bjsxt.feign.AccountServiceFeign;
 import com.bjsxt.model.R;
 import com.bjsxt.service.AccountService;
+import com.bjsxt.vo.SymbolAssetVo;
 import com.bjsxt.vo.UserTotalAccountVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -15,10 +17,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
+
 @RestController
 @RequestMapping("/account")
 @Api(tags = "资产服务的控制器")
-public class AccountController {
+public class AccountController implements AccountServiceFeign {
 
 
     @Autowired
@@ -42,5 +46,28 @@ public class AccountController {
         Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
         UserTotalAccountVo userTotalAccountVo = accountService.getUserTotalAccount(userId);
         return R.ok(userTotalAccountVo);
+    }
+
+    @GetMapping("/asset/{symbol}")
+    @ApiOperation(value = "交易货币的资产")
+    public R<SymbolAssetVo> getSymbolAssert(@PathVariable("symbol") String symbol) {
+        Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+        SymbolAssetVo symbolAssetVo = accountService.getSymbolAssert(symbol, userId);
+        return R.ok(symbolAssetVo);
+    }
+
+    /**
+     * 锁定用户的余额
+     *
+     * @param userId  用户的id
+     * @param coinId  币种的id
+     * @param mum     锁定的数量
+     * @param type    业务类型
+     * @param orderId 订单编号
+     * @param fee
+     */
+    @Override
+    public void lockUserAmount(Long userId, Long coinId, BigDecimal mum, String type, Long orderId, BigDecimal fee) {
+        accountService.lockUserAmount(userId, coinId, mum, type, orderId, fee);
     }
 }

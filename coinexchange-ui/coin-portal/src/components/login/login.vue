@@ -40,9 +40,9 @@
                           :placeholder="$t('m.userCenter.plzPassword')"></el-input>
               </el-form-item>
 
-              <el-form-item id="captcha" class="captcha" ref="captcha">
+              <!-- <el-form-item id="captcha" class="captcha" ref="captcha">
                 <p :class="['wait',showCaptcha?'show':'hide']">{{$t('m.userCenter.verificationLoading')}}</p>
-              </el-form-item>
+              </el-form-item> -->
 
               <div class="account-help">
                 <div class="help-box">
@@ -158,28 +158,28 @@
       submitForm(checkStatus,ga_code) {
         let root = this;
         this.$refs.form.validate((valid) => {
-          if (!valid) {
-            root.captchaObj.reset();
-            return false;
-          }
-          // 极验返回结果有延迟，这里也要延迟
-          if (Timer) clearTimeout(Timer);
-          const {geetest_challenge, geetest_validate, geetest_seccode} = root.captchaSuccess;
-          if (!geetest_challenge || !geetest_validate || !geetest_seccode) {
-            if (checkStatus === true) {
-              root.$message({
-                message: this.$t('m.userCenter.geeTestButtonText'),
-                type: 'error'
-              });
-              return;
-            } else {
-              Timer = setTimeout(() => {
-                this.submitForm(true)
-              }, 1000);
-              return;
-            }
-          } 
-          this.loading = true;
+          // if (!valid) {
+          //   root.captchaObj.reset();
+          //   return false;
+          // }
+          // // 极验返回结果有延迟，这里也要延迟
+          // if (Timer) clearTimeout(Timer);
+          // const {geetest_challenge, geetest_validate, geetest_seccode} = root.captchaSuccess;
+          // if (!geetest_challenge || !geetest_validate || !geetest_seccode) {
+          //   if (checkStatus === true) {
+          //     root.$message({
+          //       message: this.$t('m.userCenter.geeTestButtonText'),
+          //       type: 'error'
+          //     });
+          //     return;
+          //   } else {
+          //     Timer = setTimeout(() => {
+          //       this.submitForm(true)
+          //     }, 1000);
+          //     return;
+          //   }
+          // } 
+          // this.loading = true;
 
 
           if (this.errors.mobile !== '') {
@@ -194,10 +194,10 @@
             username: this.ruleForm.mobile,
             password: this.ruleForm.password ,
             uuid: root.uuidCode,
-            geetest_challenge,
-            geetest_validate,
-            geetest_seccode,
-            ga_code 
+            //geetest_challenge,
+            //geetest_validate,
+            //geetest_seccode,
+            //ga_code 
           };
           loginRegist.login(data).then(res => {
             console.log("结果",res)

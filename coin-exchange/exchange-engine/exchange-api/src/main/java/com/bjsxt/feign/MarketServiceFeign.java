@@ -18,4 +18,6 @@ public interface MarketServiceFeign {
     @GetMapping("/getMarket")
     MarketDto findByCoinId(@RequestParam("buyCoinId") Long buyCoinId, @RequestParam("sellCoinId") Long sellCoinId);
 
+    @GetMapping("/getMarket/symbol")
+    MarketDto findBySymbol(@RequestParam("symbol") String symbol);
 }
