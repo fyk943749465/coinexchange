@@ -12,10 +12,8 @@ spring:
       rocketmq:
         binder:
           name-server: rocket-server:9876
-        binders:
-          order_in: {consumer.orderly: true}
       bindings:
-        order_in: {destination: order-in, content-type: application/plain, group: order-group, consumer.maxAttempts: 1}
+        order_in: {destination: order_in, content-type: application/plain, group: order-group, consumer.maxAttempts: 1}
   match:
     symbols:
       BTCGCN:

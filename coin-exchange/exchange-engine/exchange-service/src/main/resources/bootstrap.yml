@@ -8,3 +8,11 @@ spring:
       server-addr: nacos-server:8848
       config:
         file-extension: yaml
+    stream:
+      rocketmq:
+        binder:
+          name-server: rocket-server:9876
+        binders:
+          order_in: { consumer.orderly: true }
+      bindings:
+        order_out: {destination: order_in, content-type: application/plain}
