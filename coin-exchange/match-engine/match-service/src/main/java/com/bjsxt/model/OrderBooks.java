@@ -43,6 +43,16 @@ public class OrderBooks {
     private int baseCoinScale;
 
     /**
+     * 买方的盘口数据
+     */
+    private TradePlate buyTradePlate;
+
+    /**
+     * 卖方的盘口数据
+     */
+    private TradePlate sellTradePlate;
+
+    /**
      * 日期格式器
      */
     private SimpleDateFormat dateTimeFormat;
@@ -68,6 +78,10 @@ public class OrderBooks {
         buyLimitPrice = new TreeMap<>(Comparator.reverseOrder()); //价格从大到小
 
         sellLimitPrice = new TreeMap<>(Comparator.naturalOrder()); // 价格从小到大
+
+        buyTradePlate = new TradePlate(symbol, OrderDirection.BUY);
+
+        sellTradePlate = new TradePlate(symbol, OrderDirection.SELL);
 
         dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     }

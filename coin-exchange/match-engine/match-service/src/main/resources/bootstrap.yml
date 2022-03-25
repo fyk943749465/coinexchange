@@ -14,6 +14,10 @@ spring:
           name-server: rocket-server:9876
       bindings:
         order_in: {destination: order_in, content-type: application/plain, group: order-group, consumer.maxAttempts: 1}
+        trade_plate_out: { destination: trade_plate_out, content-type: application/plain }
+        completed_orders_out: { destination: completed_orders_out, content-type: application/plain }
+        exchange_trades_out: { destination: exchange_trades_out, content-type: application/plain }
+        cancel_order_out: { destination: cancel_order_out, content-type: application/plain }
   match:
     symbols:
       BTCGCN:

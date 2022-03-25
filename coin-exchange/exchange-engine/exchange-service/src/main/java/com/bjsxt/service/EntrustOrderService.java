@@ -3,6 +3,7 @@ package com.bjsxt.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bjsxt.domain.EntrustOrder;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.bjsxt.domain.ExchangeTrade;
 import com.bjsxt.vo.OrderParamVo;
 import com.bjsxt.vo.TradeEntrustOrderVo;
 
@@ -18,4 +19,8 @@ public interface EntrustOrderService extends IService<EntrustOrder>{
     Page<TradeEntrustOrderVo> getEntrustOrder(Page<EntrustOrder> page, String symbol, Long userId);
 
     Boolean createEntrustOrder(Long userId, OrderParamVo orderParam);
+
+    void doMatch(ExchangeTrade exchangeTrade);
+
+    void cancleEntrustOrderToDb(String orderId);
 }

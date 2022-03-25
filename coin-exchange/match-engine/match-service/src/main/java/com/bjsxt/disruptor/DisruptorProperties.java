@@ -9,7 +9,7 @@ public class DisruptorProperties {
 
 
     /**
-     * 缓冲区的大小
+     * 缓冲区的大小，即ringBuffer的大小
      */
     private Integer ringBufferSize = 1024 * 1024 ;
 

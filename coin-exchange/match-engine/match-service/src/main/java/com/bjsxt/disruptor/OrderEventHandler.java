@@ -5,12 +5,14 @@ import com.bjsxt.match.MatchServiceFactory;
 import com.bjsxt.model.Order;
 import com.bjsxt.model.OrderBooks;
 import com.lmax.disruptor.EventHandler;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 /**
  * 该对象有多个，与交易对一一对应
  * 针对某一个交易对，同一时间只会有一个线程来执行
  */
+@Data
 @Slf4j
 public class OrderEventHandler implements EventHandler<OrderEvent> {
 

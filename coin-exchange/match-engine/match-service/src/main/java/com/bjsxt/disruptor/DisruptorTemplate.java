@@ -9,7 +9,8 @@ import com.lmax.disruptor.RingBuffer;
  */
 public class DisruptorTemplate {
 
-    private static final EventTranslatorOneArg<OrderEvent, Order> TRANSLATOR = new EventTranslatorOneArg<OrderEvent, Order>() {
+    private static final EventTranslatorOneArg<OrderEvent, Order> TRANSLATOR =
+            new EventTranslatorOneArg<OrderEvent, Order>() {
 
         public void translateTo(OrderEvent event, long sequence, Order input) {
             event.setSource(input);

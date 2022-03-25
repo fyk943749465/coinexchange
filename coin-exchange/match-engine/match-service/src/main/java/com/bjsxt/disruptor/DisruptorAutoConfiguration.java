@@ -32,6 +32,10 @@ public class DisruptorAutoConfiguration {
         return orderEventEventFactory;
     }
 
+    /**
+     * 线程工厂
+     * @return
+     */
     @Bean
     public ThreadFactory threadFactory() {
         return new AffinityThreadFactory("Match-Handler:") ;
