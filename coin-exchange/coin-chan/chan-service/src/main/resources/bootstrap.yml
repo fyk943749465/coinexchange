@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: chan-service
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      server-addr: nacos-server:8848
+      config:
+        file-extension: yaml
+    stream:
+      bindings:
+        tio_group: { destination: tio_group, content-type: application/plain, group: order-group, consumer.maxAttempts: 1 }
+      rocketmq:
+        binder:
+          name-server: rocket-server:9876
+# tio的配置文件
+tio:
+  websocket:
+    server:
+      port: 8987 # 监听的websocket端口
+      heartbeat-timeout: 60000  # 监听的心跳时间
+    cluster:
+      enable: true # 开启集群
+      redis: # 集群是基于redis的
+        ip: redis-server
+        port: 6380
+        password: Ltd2022@$
